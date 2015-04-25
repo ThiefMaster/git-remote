@@ -1,0 +1,15 @@
+.cache/
+.eggs/
+.idea/
+.tox/
+build/
+dist/
+env/
+
+*.egg
+*.egg-info
+*.pyc
+*.swp
+
+gitremote.yaml
+gitremote.exe

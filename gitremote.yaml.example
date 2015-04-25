@@ -1,0 +1,13 @@
+ssh:
+  # Hostname of the remote machine
+  host: linuxbox
+  # Username for the remote machine
+  user: myself
+  # Authentication is always done via agent (i.e. Pageant)
+server:
+  host: linuxbox
+  port: 12345
+  username: ~
+  password: ~
+repos:
+  X:\some\folder\: /home/user/some/folder/
