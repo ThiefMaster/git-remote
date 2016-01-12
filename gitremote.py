@@ -7,7 +7,6 @@ import sys
 import subprocess
 import yaml
 
-import paramiko
 import requests
 
 config = None
@@ -36,29 +35,10 @@ def run_git_remote(repo_dir, args):
     except Exception:
         # TODO: log it
         raise
-        # return run_git_remote_ssh(repo_dir, args)
     else:
         payload = response.json()
         sys.stderr.write(payload['stderr'])
         return payload['stdout'].encode(sys.stdout.encoding), payload['exitcode']
-
-
-def run_git_remote_ssh(repo_dir, args):
-    ssh_conn = paramiko.SSHClient()
-    ssh_conn.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh_conn.connect(config['ssh']['host'], username=config['ssh']['user'], allow_agent=True)
-    cmdline = 'cd {}; git {}'.format(repo_dir, ' '.join(args))
-    chan = ssh_conn.get_transport().open_session()
-    chan.exec_command(cmdline)
-    stdin = chan.makefile('wb')
-    stdout = chan.makefile('r')
-    stderr = chan.makefile_stderr('r')
-    stdin.close()
-    sys.stderr.write(str(stderr.read(), sys.stderr.encoding))
-    output = stdout.read()
-    rc = chan.recv_exit_status()
-    ssh_conn.close()
-    return output, rc
 
 
 def run_git_local(args):
