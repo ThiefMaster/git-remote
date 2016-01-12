@@ -49,7 +49,7 @@ def main():
     if not config['server']['username'] or not config['server']['password']:
         raise Exception('Server username/password is not set')
 
-    app.run(config['server']['host'], (config['server']['port']))
+    app.run(config['server']['host'], config['server']['port'])
 
 
 if __name__ == '__main__':
