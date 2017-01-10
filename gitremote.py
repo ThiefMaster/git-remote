@@ -38,7 +38,10 @@ def run_git_remote(repo_dir, args):
     else:
         payload = response.json()
         sys.stderr.write(payload['stderr'])
-        return payload['stdout'].encode(sys.stdout.encoding), payload['exitcode']
+        try:
+            return payload['stdout'].encode(sys.stdout.encoding), payload['exitcode']
+        except UnicodeEncodeError:
+            return payload['stdout'].encode('utf-8'), payload['exitcode']
 
 
 def run_git_local(args):
