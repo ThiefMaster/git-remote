@@ -12,14 +12,20 @@ config = None
 app = Flask(__name__)
 
 
+def _strip_quotes(s):
+    if s and s[0] == s[-1] and s[0] in '\'"':
+        return s[1:-1]
+    return s
+
+
 @app.route('/git', methods=('POST',))
 def git_handler():
     auth = request.authorization
     if not auth or config['server']['username'] != auth.username or config['server']['password'] != auth.password:
         raise Unauthorized()
     payload = request.get_json()
-    command = ['git'] + payload['args']
-    print(' '.join(command))
+    command = ['git'] + list(map(_strip_quotes, payload['args']))
+    print(command)
     with subprocess.Popen(command, cwd=payload['path'], stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
         try:
             stdout, stderr = process.communicate()
@@ -49,7 +55,7 @@ def main():
     if not config['server']['username'] or not config['server']['password']:
         raise Exception('Server username/password is not set')
 
-    app.run(config['server']['host'], config['server']['port'])
+    app.run(config['server']['host'], config['server']['port'], threaded=True)
 
 
 if __name__ == '__main__':

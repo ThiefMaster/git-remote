@@ -12,18 +12,6 @@ import requests
 config = None
 
 
-def fix_makac_args(arg):
-    if arg.startswith('MaKaC'):
-        return 'indico/{}'.format(arg)
-    elif 'MaKaC/' in arg:
-        return arg.replace('MaKaC/', 'indico/MaKaC/')
-    return arg
-
-
-def fix_makac_result(data):
-    return data.replace(b'indico/MaKaC', b'MaKaC')
-
-
 def run_git_remote(repo_dir, args):
     # Try our server first
     url = 'http://{}:{}/git'.format(config['server']['host'], config['server']['port'])
@@ -64,7 +52,7 @@ def main():
         print('Config file not found: {}'.format(config_file))
         sys.exit(1)
 
-    args = list(map(shlex.quote, map(fix_makac_args, sys.argv[1:])))
+    args = list(map(shlex.quote, sys.argv[1:]))
     cwd = os.path.normcase(os.getcwd())
     for base, remote in config['repos'].items():
         base = os.path.normcase(base)
@@ -76,7 +64,7 @@ def main():
     else:
         output, rc = run_git_local(args)
 
-    sys.stdout.write(str(fix_makac_result(output), sys.stdout.encoding))
+    sys.stdout.write(str(output, sys.stdout.encoding))
     sys.exit(rc)
 
 
