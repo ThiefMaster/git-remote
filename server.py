@@ -26,9 +26,11 @@ def git_handler():
     payload = request.get_json()
     command = ['git'] + list(map(_strip_quotes, payload['args']))
     print(command)
+    if payload['stdin']:
+        print('STDIN', payload['stdin'])
     with subprocess.Popen(command, cwd=payload['path'], stdout=subprocess.PIPE, stderr=subprocess.PIPE) as process:
         try:
-            stdout, stderr = process.communicate()
+            stdout, stderr = process.communicate(payload['stdin'])
         except:
             process.kill()
             process.wait()
